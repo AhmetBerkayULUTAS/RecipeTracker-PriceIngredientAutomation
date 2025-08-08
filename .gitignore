@@ -1,0 +1,11 @@
+tarifler.db
+urunler.db
+urunler.csv
+data.csv
+chromedriver.exe
+__pycache__/ 
+*.pkl
+*.tflite
+a.py
+demo.py
+olcum.csv

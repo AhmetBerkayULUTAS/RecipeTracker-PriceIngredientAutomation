@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yemek Ara</title>
+    <style>
+        body {
+            text-align: center;
+            margin-top: 50px;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1 {
+            color: #4285F4;
+            margin-bottom: 30px;
+        }
+
+        form {
+            margin-bottom: 40px;
+        }
+
+        input[type="text"] {
+            width: 40%;
+            max-width: 500px;
+            padding: 12px 15px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4285F4;
+            box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3);
+        }
+
+        input[type="submit"] {
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: none;
+            background-color: #4285F4;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-left: 10px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #357ae8;
+            transform: translateY(-2px);
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .results-container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: left;
+            margin-top: 30px;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .recipe-card {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            margin-bottom: 15px;
+        }
+
+        .recipe-card:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .recipe-card h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #007bff;
+        }
+
+        .recipe-card h3 a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .recipe-card h3 a:hover {
+            text-decoration: underline;
+        }
+
+        .recipe-card p {
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #666;
+            white-space: pre-wrap;
+        }
+
+        /* YÜKLENİYOR SPINNER */
+        #loading {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(255,255,255,0.85);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            border: 8px solid #eee;
+            border-top: 8px solid #4285F4;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0%   { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body.loading #loading {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <!-- Yükleniyor Spinner -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Tarifler aranıyor...</p>
+    </div>
+
+    <h1 style="color: #4285F4;">Evde Yapsak Kaça Patlar</h1>
+    <form method="post">
+        <input type="text" name="search_term" placeholder="Aramak istediğiniz yemeği yazın" value="{{ search_term if search_term }}">
+        <input type="submit" value="Ara">
+    </form>
+
+    {% if error_message %}
+        <p class="message error">{{ error_message }}</p>
+    {% endif %}
+
+    {% if search_term and search_done %}
+        <p class="message">"{{ search_term }}" için arama tamamlandı.</p>
+    {% endif %}
+
+    {% if tarifler %}
+        <div class="results-container">
+            <h2>Arama Sonuçları:</h2>
+            {% for tarif in tarifler %}
+                <div class="recipe-card">
+                    <h3><a href="{{ tarif[1] }}" target="_blank">{{ tarif[0] }}</a></h3>
+                    <p><strong>Malzemeler:</strong><br>{{ tarif[2] }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% elif search_done and not tarifler %}
+        <p class="message">"{{ search_term }}" için hiçbir tarif bulunamadı</p>
+    {% endif %}
+
+
+    <script>
+        document.querySelector("form").addEventListener("submit", function () {
+            document.body.classList.add("loading");
+        });
+    </script>
+</body>
+</html>
